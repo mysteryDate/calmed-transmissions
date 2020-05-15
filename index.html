@@ -9,25 +9,28 @@
       margin: 0;
       background-color: black;
     }
-    iframe {
+    #player {
       position: absolute;
     }
-
   </style>
 </head>
 <body>
-  <iframe id="video" src="https://www.youtube.com/embed/zhNvAduJe9k?controls=0&autoplay=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  <div id="player"></div>
 
 <script type="text/javascript">
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
   const aspectRatio = 16/9;
-  const maxTime = 581;
-  var video = document.getElementById("video");
+  var video = document.getElementById("player");
   video.style.pointerEvents = "none";
   const queryString = window.location.search.substring(1);
+  const searchParams = new URLSearchParams(queryString);
   let videoID = "zhNvAduJe9k";
-  if (queryString) {
-    videoID = queryString
-    video.src = `https://www.youtube.com/embed/${videoID}?controls=0&autoplay=0`;
+  if (searchParams.has("videoID")) {
+    videoID = searchParams.get("videoID");
   }
 
   window.onresize = function(e) {
@@ -46,14 +49,37 @@
       video.style.top = "0px";
     }
   }
-
-  document.onclick = function(e) {
-    const time = Math.floor(Math.random() * maxTime);
-    const srcString = `https://www.youtube.com/embed/${videoID}?controls=0&autoplay=1&start=${time}`;
-    video.src = srcString;
-
-  }
   onresize();
+
+  var player;
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      height: '390',
+      width: '640',
+      videoId: videoID,
+      events: {
+        'onReady': onPlayerReady,
+      },
+      playerVars: {
+        'autoplay': 0,
+        'controls': 0,
+        'rel' : 0,
+        'fs' : 0,
+      }
+    })
+  }
+  function onPlayerReady(event) {
+    video = document.getElementById("player");
+    const maxTime = player.getDuration();
+    document.onclick = function(e) {
+      const time = Math.floor(Math.random() * maxTime);
+      player.seekTo(time);
+    }
+    document.touchstart = function(e) {
+      document.onclick(e);
+    }
+    onresize();
+  }
 </script>
 
 </body>
