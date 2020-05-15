@@ -23,9 +23,14 @@
   const maxTime = 581;
   var video = document.getElementById("video");
   video.style.pointerEvents = "none";
+  const queryString = window.location.search.substring(1);
+  let videoID = "zhNvAduJe9k";
+  if (queryString) {
+    videoID = queryString
+    video.src = `https://www.youtube.com/embed/${videoID}?controls=0&autoplay=0`;
+  }
 
   window.onresize = function(e) {
-    console.log(e);
     const w = document.body.clientWidth;
     const h = document.body.clientHeight;
     const isHorizontalConstrained = w/h <= aspectRatio ? true : false;
@@ -44,7 +49,7 @@
 
   document.onclick = function(e) {
     const time = Math.floor(Math.random() * maxTime);
-    const srcString = `https://www.youtube.com/embed/zhNvAduJe9k?controls=0&autoplay=1&start=${time}`;
+    const srcString = `https://www.youtube.com/embed/${videoID}?controls=0&autoplay=1&start=${time}`;
     video.src = srcString;
 
   }
