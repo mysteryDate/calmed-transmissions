@@ -18,6 +18,16 @@
   <div id="player"></div>
 
 <script type="text/javascript">
+  // clusters [A, B, C, D, E, F, G]
+  const playlist = [
+    "ErV0Xyt93mU",
+    "FFaFpdVcFbs",
+    "8IQFh7uvqYA",
+    "SZj3EU4-xoQ",
+    "CmQANuscuno",
+    "M3DJyK5D5dA",
+    "EWz5n3pOjP8",
+  ];
   var tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
   var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -26,12 +36,6 @@
   const aspectRatio = 16/9;
   var video = document.getElementById("player");
   video.style.pointerEvents = "none";
-  const queryString = window.location.search.substring(1);
-  const searchParams = new URLSearchParams(queryString);
-  let videoID = "zhNvAduJe9k";
-  if (searchParams.has("videoID")) {
-    videoID = searchParams.get("videoID");
-  }
 
   window.onresize = function(e) {
     const w = document.body.clientWidth;
@@ -56,7 +60,7 @@
     player = new YT.Player('player', {
       height: '390',
       width: '640',
-      videoId: videoID,
+      // videoId: playlist[0],
       events: {
         'onReady': onPlayerReady,
       },
@@ -70,8 +74,11 @@
   }
   function onPlayerReady(event) {
     video = document.getElementById("player");
-    const maxTime = player.getDuration();
+    player.cuePlaylist(playlist);
     document.onclick = function(e) {
+      const videoIndex = Math.floor(Math.random() * playlist.length);
+      player.playVideoAt(videoIndex);
+      const maxTime = player.getDuration();
       const time = Math.floor(Math.random() * maxTime);
       player.seekTo(time);
     }
