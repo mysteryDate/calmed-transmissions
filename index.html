@@ -1,93 +1,95 @@
 <!DOCTYPE html>
+<meta charset="UTF-8">
 <html>
 <head>
-  <title></title>
+  <title>C.A.L.M.E.D Transmissions</title>
   <style type="text/css">
     html, body {
       width: 100%;
       height: 100%;
       margin: 0;
       background-color: black;
+      color: white;
+      font-family: 'Lora', serif;
     }
-    #player {
-      position: absolute;
+    #logo {
+      /*width: 50%;*/
+      max-height: 500px;
+      display: block;
+      margin: auto;
+    }
+    #logo-container {
+      margin-top: 50px;
+      width: 100%;
+      margin-bottom: 25px;
+    }
+    #launch {
+      text-decoration: none;
+      width: 100%;
+    }
+    #launch:hover {
+      color: white;
+    }
+    #launch h1:hover {
+      background-color: magenta;
+    }
+    #launch h1 {
+      margin: auto;
+      margin-top: 50px;
+      max-width: 800px;
+      width: 75%;
+      background-color: #282922;
+      border: 1px solid #ffd5e4;
+      border-radius: 10px;
+      text-align: center;
+    }
+    a {
+      color: #ffd5e4;
+    }
+    #message {
+      width: 80%;
+      text-align: justify;
+      max-width: 1000px;
+      margin: auto;
     }
   </style>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="player"></div>
-
+  <div id="logo-container">
+    <img src="no-background-very-small.png" id="logo">
+  </div>
+  <div id="message">
+    <p>
+    Welcome to the C.A.L.M.E.D. Space Station Centralized Dispatch Hub, Your Every Day Cultivation Station.
+    <br>
+    <br>
+    Thanks to modern streaming technology, we are pleased to be able to offer our dispatches 24 hours a day, seven days a week, across the globe. Once the transmission is initiated, enjoy a constant stream of scintillating music and atmospheric meditations, performed LIVE and ONLINE.... in “The Spaceship.”
+    <br>
+    <br>
+    Once the stream is initiated via link below, click anywhere on your screen to adjust the transmission.
+    <br>
+    <br>
+    Donations to the C.A.L.M.E.D. Transmissions Intergalactic Trust can be submitted HERE. Help us Cultivate A Little More Every Day by donating today! Please direct all press inquiries, questions, or comments to <a href="mailto:calmedtransmissions@gmail.com">calmedtransmissions@gmail.com</a>
+    </p>
+  </div>
+<a href="player.html" id="launch">
+  <div>
+     <h1>LAUNCH TRANSMISSION</h1>
+  </div>
+</a>
 <script type="text/javascript">
-  // clusters [A, B, C, D, E, F, G]
-  const playlist = [
-    "ErV0Xyt93mU",
-    "FFaFpdVcFbs",
-    "8IQFh7uvqYA",
-    "SZj3EU4-xoQ",
-    "CmQANuscuno",
-    "M3DJyK5D5dA",
-    "EWz5n3pOjP8",
-  ];
-  var tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  var firstScriptTag = document.getElementsByTagName('script')[0];
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-  const aspectRatio = 16/9;
-  var video = document.getElementById("player");
-  video.style.pointerEvents = "none";
-
-  window.onresize = function(e) {
-    const w = document.body.clientWidth;
-    const h = document.body.clientHeight;
-    const isHorizontalConstrained = w/h <= aspectRatio ? true : false;
-    if (isHorizontalConstrained) {
-      video.width = w;
-      video.height = video.width / aspectRatio;
-      video.style.top = (h - video.height) / 2 + "px";
-      video.style.left = "0px";
-    } else {
-      video.height = h;
-      video.width = video.height * aspectRatio;
-      video.style.left = (w - video.width) / 2 + "px";
-      video.style.top = "0px";
-    }
+  const logo = document.getElementById("logo");
+  logo.onload = function(e) {
+    document.body.style.setProperty = "";
   }
-  onresize();
-
-  var player;
-  function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player', {
-      height: '390',
-      width: '640',
-      // videoId: playlist[0],
-      events: {
-        'onReady': onPlayerReady,
-      },
-      playerVars: {
-        'autoplay': 0,
-        'controls': 0,
-        'rel' : 0,
-        'fs' : 0,
-      }
-    })
+  function draw() {
+    d = performance.now() / 10;
+    logo.style.filter = `hue-rotate(${d}deg`;
+    requestAnimationFrame(draw);
   }
-  function onPlayerReady(event) {
-    video = document.getElementById("player");
-    player.cuePlaylist(playlist);
-    document.onclick = function(e) {
-      const videoIndex = Math.floor(Math.random() * playlist.length);
-      player.playVideoAt(videoIndex);
-      const maxTime = player.getDuration();
-      const time = Math.floor(Math.random() * maxTime);
-      player.seekTo(time);
-    }
-    document.touchstart = function(e) {
-      document.onclick(e);
-    }
-    onresize();
-  }
+  draw();
 </script>
-
 </body>
 </html>

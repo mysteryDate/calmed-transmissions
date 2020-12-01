@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <style type="text/css">
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      background-color: black;
+    }
+    #player {
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <div id="player"></div>
+
+<script type="text/javascript">
+  // clusters [A, B, C, D, E, F, G]
+  const playlist = [
+    "ErV0Xyt93mU",
+    "FFaFpdVcFbs",
+    "8IQFh7uvqYA",
+    "SZj3EU4-xoQ",
+    "CmQANuscuno",
+    "M3DJyK5D5dA",
+    "EWz5n3pOjP8",
+  ];
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  const aspectRatio = 16/9;
+  var video = document.getElementById("player");
+  video.style.pointerEvents = "none";
+
+  window.onresize = function(e) {
+    const w = document.body.clientWidth;
+    const h = document.body.clientHeight;
+    const isHorizontalConstrained = w/h <= aspectRatio ? true : false;
+    if (isHorizontalConstrained) {
+      video.width = w;
+      video.height = video.width / aspectRatio;
+      video.style.top = (h - video.height) / 2 + "px";
+      video.style.left = "0px";
+    } else {
+      video.height = h;
+      video.width = video.height * aspectRatio;
+      video.style.left = (w - video.width) / 2 + "px";
+      video.style.top = "0px";
+    }
+  }
+  onresize();
+
+  var player;
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      height: '390',
+      width: '640',
+      // videoId: playlist[0],
+      events: {
+        'onReady': onPlayerReady,
+      },
+      playerVars: {
+        'autoplay': 0,
+        'controls': 0,
+        'rel' : 0,
+        'fs' : 0,
+      }
+    })
+  }
+  function onPlayerReady(event) {
+    video = document.getElementById("player");
+    player.cuePlaylist(playlist);
+    document.onclick = function(e) {
+      const videoIndex = Math.floor(Math.random() * playlist.length);
+      player.playVideoAt(videoIndex);
+      const maxTime = player.getDuration();
+      const time = Math.floor(Math.random() * maxTime);
+      player.seekTo(time);
+    }
+    document.touchstart = function(e) {
+      document.onclick(e);
+    }
+    onresize();
+  }
+</script>
+
+</body>
+</html>
