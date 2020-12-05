@@ -19,7 +19,7 @@
       margin: auto;
     }
     #logo-container {
-      margin-top: 50px;
+      padding-top: 50px;
       width: 100%;
       margin-bottom: 25px;
     }
@@ -31,7 +31,8 @@
       color: white;
     }
     #launch h1:hover {
-      background-color: magenta;
+      background-color: #ff0070;
+      cursor: pointer;
     }
     #launch h1 {
       margin: auto;
@@ -60,15 +61,23 @@
     #donate img {
       width: 100px;
     }
+    #player {
+      position: absolute;
+      display: none;
+    }
   </style>
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="favicon.png" />
+  <meta property="og:image" content="no-background-very-small.png" />
+
 </head>
 <body>
-  <div id="logo-container">
+  <div id="player"></div>
+  <div class="hide" id="logo-container">
     <img src="no-background-very-small.png" id="logo">
   </div>
-  <div id="message">
+  <div id="message" class="hide">
     <p>
     Welcome to the C.A.L.M.E.D. Space Station Centralized Dispatch Hub, Your Every Day Cultivation Station.
     <br>
@@ -82,12 +91,12 @@
      Help us Cultivate A Little More Every Day by donating today! Please direct all press inquiries, questions, or comments to <a href="mailto:calmedtransmissions@gmail.com">calmedtransmissions@gmail.com</a>
     </p>
   </div>
-<a href="player.html" id="launch">
+<a id="launch" class="hide" onclick="launchTransmission(event)">
   <div>
      <h1>LAUNCH TRANSMISSION</h1>
   </div>
 </a>
-<a id="donate" href="https://www.paypal.com/paypalme/calmedtransmissions">
+<a class="hide" id="donate" href="https://www.paypal.com/paypalme/calmedtransmissions">
   <img src="https://www.freepngimg.com/download/paypal_donate_button/5-2-paypal-donate-button-png-clipart.png">
 </a>
 <script type="text/javascript">
@@ -100,7 +109,94 @@
     logo.style.filter = `hue-rotate(${d}deg`;
     requestAnimationFrame(draw);
   }
+  function launchTransmission(e) {
+    const playerDiv = document.getElementById("player");
+    playerDiv.style.display = "block";
+    document.querySelectorAll(".hide").forEach((element) => {
+      element.style.display = "none"
+    });
+  }
   draw();
+
+  // clusters [A, B, C, D, E, F, G]
+  const playlist = [
+    "ErV0Xyt93mU",
+    "FFaFpdVcFbs",
+    "8IQFh7uvqYA",
+    "SZj3EU4-xoQ",
+    "CmQANuscuno",
+    "M3DJyK5D5dA",
+    "EWz5n3pOjP8",
+  ];
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  const aspectRatio = 16/9;
+  var video = document.getElementById("player");
+  video.style.pointerEvents = "none";
+
+  window.onresize = function(e) {
+    const w = document.body.clientWidth;
+    const h = document.body.clientHeight;
+    const isHorizontalConstrained = w/h <= aspectRatio ? true : false;
+    if (isHorizontalConstrained) {
+      video.width = w;
+      video.height = video.width / aspectRatio;
+      video.style.top = (h - video.height) / 2 + "px";
+      video.style.left = "0px";
+    } else {
+      video.height = h;
+      video.width = video.height * aspectRatio;
+      video.style.left = (w - video.width) / 2 + "px";
+      video.style.top = "0px";
+    }
+  }
+  onresize();
+
+  var player;
+  let isLaunched = false;
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      height: '390',
+      width: '640',
+      events: {
+        'onReady': onPlayerReady,
+      },
+      playerVars: {
+        'autoplay': 0,
+        'controls': 0,
+        'rel' : 0,
+        'fs' : 0,
+      }
+    });
+
+    player.seekToRandom = function() {
+      const videoIndex = Math.floor(Math.random() * playlist.length);
+      player.playVideoAt(videoIndex);
+      const maxTime = player.getDuration();
+      const time = Math.floor(Math.random() * maxTime);
+      player.seekTo(time);
+    }
+  }
+  function onPlayerReady(event) {
+    video = document.getElementById("player");
+    player.cuePlaylist(playlist);
+    player.seekToRandom();
+    document.onclick = function(e) {
+      if (isLaunched)
+        player.seekToRandom();
+      else {
+        player.playVideo();
+        isLaunched = true;
+      }
+    }
+    document.touchstart = function(e) {
+      document.onclick(e);
+    }
+    onresize();
+  }
 </script>
 </body>
 </html>
